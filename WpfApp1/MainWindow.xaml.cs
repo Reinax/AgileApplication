@@ -97,29 +97,29 @@ namespace WpfApp1
                 hssfwb = new XSSFWorkbook(file);
             }
 
-            DataGridView.Columns.Add(new DataGridTextColumn { Header = "Name", Binding = new Binding("Name") });
-            DataGridView.Columns.Add(new DataGridTextColumn { Header = "Ingredient 1", Binding = new Binding("Ingredient 1") });
-            DataGridView.Columns.Add(new DataGridTextColumn { Header = "Ingredient 2", Binding = new Binding("Ingredient 2") });
-            DataGridView.Columns.Add(new DataGridTextColumn { Header = "Top Meal", Binding = new Binding("Top Meal") });
+
             ISheet sheet = hssfwb.GetSheet("Recipes");
-            for (int row = 0; row <= sheet.LastRowNum+1; row++)
+            System.Collections.IEnumerator rows = sheet.GetRowEnumerator();
+
+            rows.MoveNext();
+            IRow r = (XSSFRow)rows.Current;
+            int z = r.LastCellNum;
+
+            for (int j = 0; j < z; j++)
             {
-                
-                if (sheet.GetRow(row) != null) //null is when the row only contains empty cells 
-                {
-                    MessageBox.Show(string.Format("Row {0} = {1}", row, sheet.GetRow(row).GetCell(0).StringCellValue));
-                    //MessageBox.Show(string.Format("Row {0} = {1}", row, sheet.GetRow(row).GetCell(1).StringCellValue));
-                    //MessageBox.Show(string.Format("Row {0} = {1}", row, sheet.GetRow(row).GetCell(2).StringCellValue));
-                    //MessageBox.Show(string.Format("Row {0} = {1}", row, sheet.GetRow(row).GetCell(3).StringCellValue));
-                    //DataGridView.Items.Add(string.Format("Row {0} = {1}", row, sheet.GetRow(row).GetCell(0).StringCellValue));
-                    //DataGridView.Items.Add(string.Format("Row {0} = {1}", row, sheet.GetRow(row).GetCell(1).StringCellValue));
-                    //DataGridView.Items.Add(string.Format("Row {0} = {1}", row, sheet.GetRow(row).GetCell(2).StringCellValue));
-                    //DataGridView.Items.Add(string.Format("Row {0} = {1}", row, sheet.GetRow(row).GetCell(3).StringCellValue));
-
-
-                }
+                ICell cell = r.GetCell(j);
+                DataGridView.Columns.Add(new DataGridTextColumn { Header = cell.StringCellValue, Binding = new Binding(cell.StringCellValue) });
             }
-        }
 
+            rows.MoveNext();
+            for (int i = 1; i < z; i++)
+            {
+                ICell cell = r.GetCell(i);
+                DataGridView.Items.Add(new DataGridRow { Item = cell.StringCellValue});
+            }
+
+
+
+        }
     }
 }
