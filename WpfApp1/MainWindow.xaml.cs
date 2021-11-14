@@ -100,24 +100,25 @@ namespace WpfApp1
 
             ISheet sheet = hssfwb.GetSheet("Recipes");
             System.Collections.IEnumerator rows = sheet.GetRowEnumerator();
+            
 
             rows.MoveNext();
-            IRow r = (XSSFRow)rows.Current;
-            int z = r.LastCellNum;
+            IRow HeaderRow = sheet.GetRow(0);
 
-            for (int j = 0; j < z; j++)
+            //get each header
+            foreach (ICell headerCell in HeaderRow)
             {
-                ICell cell = r.GetCell(j);
-                DataGridView.Columns.Add(new DataGridTextColumn { Header = cell.StringCellValue, Binding = new Binding(cell.StringCellValue) });
+                DataGridView.Columns.Add(new DataGridTextColumn { Header = headerCell.ToString(), Binding = new Binding(headerCell.ToString()) });
             }
 
-            rows.MoveNext();
-            for (int i = 1; i < z; i++)
-            {
-                ICell cell = r.GetCell(i);
-                DataGridView.Items.Add(new DataGridRow { Item = cell.StringCellValue});
-            }
 
+            //get rest of data
+            IRow FirstRow = sheet.GetRow(1);
+            foreach (ICell dataCell in FirstRow)
+            {
+                //rows
+                DataGridView.Items.Add(dataCell.ToString());
+            }
 
 
         }
